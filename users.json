@@ -1,0 +1,11 @@
+{
+mehrsa: {
+	class: com.twentyminutestilldawn.models.User
+	username: Mehrsa
+	password: Mehrsa12!
+	avatarPath: Avatar/avatar_3.png
+	securityQuestion: What is your favorite number?
+	securityAnswer: 121
+	score: 1
+}
+}
