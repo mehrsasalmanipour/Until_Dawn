@@ -36,6 +36,10 @@ public class Monster {
         return currentHp;
     }
 
+    public void setCurrentHp(int currentHp) {
+        this.currentHp = currentHp;
+    }
+
     public Vector2 getVelocity() {
         return velocity;
     }
@@ -69,13 +73,19 @@ public class Monster {
             elderShootCooldown -= delta;
         }
     }
+
     public boolean canElderShoot() {
         return (type == MonsterType.ELDER && elderShootCooldown <= 0f);
     }
+
     public void resetElderCooldown() {
         if (type == MonsterType.ELDER) {
             elderShootCooldown = 5.0f;
         }
+    }
+
+    public void setPosition(float x, float y) {
+        this.position.set(x, y);
     }
 }
 

@@ -10,6 +10,8 @@ public class User {
     private String securityQuestion;
     private String securityAnswer;
     private int score;
+    private int totalKills;
+    private float totalSurvivalTime;
 
     public User() {}
 
@@ -20,6 +22,8 @@ public class User {
         this.securityAnswer = securityAnswer;
         this.avatarPath = avatarPath;
         this.score = 0;
+        this.totalKills = 0;
+        this.totalSurvivalTime = 0;
     }
 
     public String getUsername() {
@@ -64,6 +68,22 @@ public class User {
 
     public void addScore(int score) {
         this.score += score;
+    }
+
+    public int getTotalKills() {
+        return totalKills;
+    }
+
+    public void addTotalKills(int totalKills) {
+        this.totalKills += totalKills;
+    }
+
+    public float getTotalSurvivalTime() {
+        return totalSurvivalTime;
+    }
+
+    public void addTotalSurvivalTime(float totalSurvivalTime) {
+        this.totalSurvivalTime += totalSurvivalTime;
     }
 
     @Override

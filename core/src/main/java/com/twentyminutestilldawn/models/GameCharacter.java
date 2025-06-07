@@ -9,7 +9,7 @@ public class GameCharacter {
     public final String id;
     public final String name;
     private int currentHp;
-    private final int maxHp;
+    private int maxHp;
     private int bonusHp = 0;
     public final int speed;
     private float speedMultiplier = 1f;
@@ -68,6 +68,22 @@ public class GameCharacter {
 
     public int getSpeed() {
         return speed;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setCurrentHp(int currentHp) {
+        this.currentHp = currentHp;
+    }
+
+    public void setMaxHp(int maxHp) {
+        this.maxHp = maxHp;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
     }
 
     public Texture getPortrait() {

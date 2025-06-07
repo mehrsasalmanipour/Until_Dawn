@@ -1,0 +1,56 @@
+{
+saves: {
+	class: java.util.HashMap
+	Mehrsa: {
+		characterId: Shana
+		characterX: 1280
+		characterY: 720
+		weaponId: Revolver
+		level: 1
+		currentHp: 3
+		maxHp: 4
+		elapsedTime: 65
+		monsters: [
+			{
+				type: TREE
+				x: 1131.4163
+				y: 5.141945
+				hp: 1000
+			}
+			{
+				type: TREE
+				x: 1039.3702
+				y: 655.0951
+				hp: 1000
+			}
+			{
+				type: TREE
+				x: 1062.9382
+				y: 167.95718
+				hp: 1000
+			}
+			{
+				type: TREE
+				x: 1109.1454
+				y: 1385.5107
+				hp: 1000
+			}
+			{
+				type: TREE
+				x: 319.48273
+				y: 428.328
+				hp: 1000
+			}
+		]
+		bullets: [
+			{
+				x: 1212.8445
+				y: 677.22186
+				dx: -0.8674838
+				dy: -0.49746543
+				damage: 20
+			}
+		]
+	}
+}
+}

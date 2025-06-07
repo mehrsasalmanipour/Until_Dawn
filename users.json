@@ -6,6 +6,24 @@ mehrsa: {
 	avatarPath: Avatar/avatar_3.png
 	securityQuestion: What is your favorite number?
 	securityAnswer: 121
-	score: 1
+	score: 7214
+	totalKills: 7
+	totalSurvivalTime: 50
+}
+meh: {
+	class: com.twentyminutestilldawn.models.User
+	username: Meh
+	password: Mehrs12!
+	avatarPath: Avatar/avatar_0.png
+	securityQuestion: What is your favorite number?
+	securityAnswer: 121
+}
+ab: {
+	class: com.twentyminutestilldawn.models.User
+	username: Ab
+	password: Abcde12!
+	avatarPath: Avatar/avatar_1.png
+	securityQuestion: What is your favorite number?
+	securityAnswer: 121
 }
 }

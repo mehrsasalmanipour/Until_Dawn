@@ -29,6 +29,7 @@ public class GameController {
     private float stateTime = 0f;
     private boolean isMoving = false;
     private boolean flipCharacter = false;
+    private int kills;
 
     private float monsterStateTime = 0f;
     private final List<Seed> seeds = new ArrayList<>();
@@ -58,6 +59,7 @@ public class GameController {
         this.totalGameLengthSeconds = totalGameLengthSeconds;
         this.camera = camera;
         this.character.setPosition(MAP_WIDTH / 2f, MAP_HEIGHT / 2f);
+        this.kills = 0;
         this.monsterController = new MonsterController(totalGameLengthSeconds);
         this.character.setLevelUpListener(new GameCharacter.LevelUpListener() {
             @Override
@@ -266,11 +268,11 @@ public class GameController {
 
                 if (overlapX && overlapY) {
                     m.takeDamage(b.damage);
-
                     bit.remove();
                     bulletRemoved = true;
 
                     if (m.isDead()) {
+                        kills += 1;
                         Vector2 seedPos = new Vector2(m.position.x, m.position.y);
                         TextureRegion seedRegion = GameAssetManager
                                 .getGameAssetManager()
@@ -287,6 +289,14 @@ public class GameController {
                 continue;
             }
         }
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public float getElapsedTime() {
+        return elapsedTime;
     }
 
     private void handleEnemyBulletPlayerCollisions() {
@@ -456,6 +466,65 @@ public class GameController {
 
     public void cheatBossFight() {
         this.elapsedTime = totalGameLengthSeconds / 2f;
+    }
+
+    public SaveData getSaveData() {
+        SaveData save = new SaveData();
+        save.characterId = character.getId();
+        save.characterX = character.getPosition().x;
+        save.characterY = character.getPosition().y;
+        save.weaponId = weaponController.getWeapon().getId();
+        save.level = character.getLevel();
+        save.currentHp = character.getCurrentHp();
+        save.maxHp = character.getMaxHp();
+        save.xp = character.getXp();
+        save.elapsedTime = this.elapsedTime;
+
+        for (AbilityType ability : gainedAbilities) {
+            save.abilities.add(ability.name());
+        }
+
+        for (Monster m : monsterController.getMonsters()) {
+            MonsterData md = new MonsterData();
+            md.type = m.type.name();
+            md.x = m.position.x;
+            md.y = m.position.y;
+            md.hp = m.getCurrentHp();
+            save.monsters.add(md);
+        }
+
+        for (Bullet b : weaponController.getBullets()) {
+            BulletData bd = new BulletData();
+            bd.x = b.sprite.getX();
+            bd.y = b.sprite.getY();
+            bd.dx = b.direction.x;
+            bd.dy = b.direction.y;
+            bd.damage = b.damage;
+            save.bullets.add(bd);
+        }
+
+        for (Bullet eb : weaponController.getEnemyBullets()) {
+            BulletData bd = new BulletData();
+            bd.x = eb.sprite.getX();
+            bd.y = eb.sprite.getY();
+            bd.dx = eb.direction.x;
+            bd.dy = eb.direction.y;
+            bd.damage = eb.damage;
+            save.enemyBullets.add(bd);
+        }
+
+        for (Seed s : seeds) {
+            SeedData sd = new SeedData();
+            sd.x = s.position.x;
+            sd.y = s.position.y;
+            save.seeds.add(sd);
+        }
+
+        return save;
+    }
+
+    public void setElapsedTime(float elapsedTime) {
+        this.elapsedTime = elapsedTime;
     }
 }
 

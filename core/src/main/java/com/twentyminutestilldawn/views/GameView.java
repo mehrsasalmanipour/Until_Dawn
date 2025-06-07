@@ -88,6 +88,90 @@ public class GameView implements Screen {
         this.gameDurationSeconds = gameDurationSeconds;
         this.pauseButton = new TextButton("Pause", skin);
     }
+
+    public GameView(User user, SaveData save, Skin skin) {
+        this.user = user;
+        this.gameDurationSeconds = (int) save.elapsedTime + 60;
+        this.playerCharacter = GameAssetManager.getGameAssetManager().getCharacterById(save.characterId);
+        this.playerCharacter.setPosition(save.characterX, save.characterY);
+        this.playerCharacter.heal(save.currentHp - this.playerCharacter.getCurrentHp());
+        playerCharacter.setLevel(save.level);
+        playerCharacter.setCurrentHp(save.currentHp);
+        playerCharacter.setMaxHp(save.maxHp);
+        playerCharacter.setXp(save.xp);
+        this.selectedWeapon = GameAssetManager.getGameAssetManager().getWeaponById(save.weaponId);
+
+        this.camera = new OrthographicCamera();
+        this.camera.setToOrtho(false, 1280, 720);
+
+        this.gameController = new GameController(user, playerCharacter, selectedWeapon, gameDurationSeconds, camera);
+        gameController.setView(this);
+
+        for (String abilityName : save.abilities) {
+            AbilityType ability = AbilityType.valueOf(abilityName);
+            gameController.applyAbility(ability);
+        }
+
+        GameAssetManager asset = GameAssetManager.getGameAssetManager();
+
+        for (MonsterData md : save.monsters) {
+            MonsterType type = MonsterType.valueOf(md.type);
+            Animation<TextureRegion> animation = asset.monsterWalkAnimations.get(type);
+
+            int hp;
+            switch (type) {
+                case TREE:
+                    hp = 1000;
+                    break;
+                case TENTACLE:
+                    hp = 25;
+                    break;
+                case EYEBAT:
+                    hp = 50;
+                    break;
+                case ELDER:
+                    hp = 400;
+                    break;
+                default:
+                    hp = 100;
+            }
+
+            Monster monster = new Monster(type, new Vector2(md.x, md.y), animation, hp);
+            monster.takeDamage(hp - md.hp);
+            gameController.getMonsterController().getMonsters().add(monster);
+        }
+
+        for (BulletData bd : save.bullets) {
+            Bullet b = new Bullet(
+                    new Vector2(bd.x, bd.y),
+                    new Vector2(bd.x + bd.dx, bd.y + bd.dy),
+                    GameAssetManager.getGameAssetManager().getBulletTexture(),
+                    bd.damage
+            );
+            gameController.getWeaponController().getBullets().add(b);
+        }
+
+        for (BulletData bd : save.enemyBullets) {
+            Bullet b = new Bullet(
+                    new Vector2(bd.x, bd.y),
+                    new Vector2(bd.x + bd.dx, bd.y + bd.dy),
+                    GameAssetManager.getGameAssetManager().getBulletTexture(),
+                    bd.damage
+            );
+            gameController.getWeaponController().getEnemyBullets().add(b);
+        }
+
+        for (SeedData sd : save.seeds) {
+            TextureRegion seedTex = GameAssetManager.getGameAssetManager().getSeedRegion();
+            Seed s = new Seed(new Vector2(sd.x, sd.y), seedTex);
+            gameController.getSeeds().add(s);
+        }
+
+        gameController.setElapsedTime(save.elapsedTime);
+
+        this.pauseButton = new TextButton("Pause", skin);
+    }
+
     @Override
     public void show() {
         camera = new OrthographicCamera();
@@ -178,6 +262,9 @@ public class GameView implements Screen {
         saveQuitButton = new TextButton("Save & Quit", skin);
         saveQuitButton.addListener(new ClickListener() {
             @Override public void clicked(InputEvent event, float x, float y) {
+                SaveData save = gameController.getSaveData();
+                SaveManager.saveGame(user, save);
+
                 if (user != null) {
                     Gdx.app.postRunnable(() -> {
                         MainMenu mainMenu = new MainMenu(new MainMenuController(user), GameAssetManager.getGameAssetManager().getSkin(), user);
@@ -302,7 +389,8 @@ public class GameView implements Screen {
         int lvl = player.getLevel();
         int curXp = player.getXp();
         int needed = 20 * lvl;
-        String xpText = String.format("Level %d   XP: %d / %d", lvl, curXp, needed);
+        int kills = gameController.getKills();
+        String xpText = String.format("Level %d   XP: %d / %d   Kills: %d", lvl, curXp, needed, kills);
 
         float halfW = camera.viewportWidth  / 2f;
         float halfH = camera.viewportHeight / 2f;
@@ -707,6 +795,10 @@ public class GameView implements Screen {
         if (dialogShown) return;
         dialogShown = true;
 
+        int survivalTime = (int) gameController.getElapsedTime();
+        int kills = gameController.getKills();
+        int score = survivalTime * kills;
+
         Dialog winDialog = new Dialog("Victory!", GameAssetManager.getGameAssetManager().getSkin()) {
             @Override
             protected void result(Object object) {
@@ -714,20 +806,30 @@ public class GameView implements Screen {
             }
         };
 
-        winDialog.text("You survived!\nYour score will be increased.");
+        winDialog.text("Result: WIN\n" +
+                "Username: " + (user != null ? user.getUsername() : "Guest") + "\n" +
+                "Survival Time: " + survivalTime + "s\n" +
+                "Kills: " + kills + "\n" +
+                "Score: " + score + " (Time * Kills)");
+
         winDialog.button("OK", true);
         winDialog.show(uiStage);
 
         if (user != null) {
-            user.addScore(1);
+            user.addScore(score);
+            user.addTotalKills(kills);
+            user.addTotalSurvivalTime(survivalTime);
             UserDatabase.save();
         }
     }
 
-
     private void showLoseDialog() {
         if (dialogShown) return;
         dialogShown = true;
+
+        int survivalTime = (int) gameController.getElapsedTime();
+        int kills = gameController.getKills();
+        int score = survivalTime * kills;
 
         Dialog loseDialog = new Dialog("Game Over", GameAssetManager.getGameAssetManager().getSkin()) {
             @Override
@@ -736,9 +838,21 @@ public class GameView implements Screen {
             }
         };
 
-        loseDialog.text("You died. Better luck next time!");
+        loseDialog.text("Result: " + gameController.getEndReason().name() + "\n" +
+                "Username: " + (user != null ? user.getUsername() : "Guest") + "\n" +
+                "Survival Time: " + survivalTime + "s\n" +
+                "Kills: " + kills + "\n" +
+                "Score: " + score + " (Time * Kills)");
+
         loseDialog.button("OK", true);
         loseDialog.show(uiStage);
+
+        if (user != null) {
+            user.addScore(score);
+            user.addTotalKills(kills);
+            user.addTotalSurvivalTime(survivalTime);
+            UserDatabase.save();
+        }
     }
 
     private void returnToMenu() {

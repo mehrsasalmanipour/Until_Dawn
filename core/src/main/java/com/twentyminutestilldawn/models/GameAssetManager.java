@@ -142,6 +142,36 @@ public class GameAssetManager {
         return characters;
     }
 
+    public GameCharacter getCharacterById(String id) {
+        Texture portrait = portraits.get(id);
+        Animation<TextureRegion> idle = idleAnimations.get(id);
+        Animation<TextureRegion> walk = walkAnimations.get(id);
+
+        int hp = 4;
+        int speed = 4;
+
+        switch (id) {
+            case "Diamond":
+                hp = 7; speed = 1; break;
+            case "Scarlet":
+                hp = 3; speed = 5; break;
+            case "Lilith":
+                hp = 5; speed = 3; break;
+            case "Dasher":
+                hp = 2; speed = 10; break;
+            case "Shana":
+            default:
+                hp = 4; speed = 4; break;
+        }
+
+        if (portrait != null && idle != null && walk != null) {
+            return new GameCharacter(id, id, hp, speed, portrait, idle, walk);
+        }
+
+        return null;
+    }
+
+
     private void loadCharacterAssets(String id, int hp, int speed) {
         String folder = "Hero/" + id;
         String portraitPath = folder + "/T_" + id + "_Portrait.png";
@@ -181,6 +211,34 @@ public class GameAssetManager {
         ));
 
         return weapons;
+    }
+
+    public Weapon getWeaponById(String id) {
+        switch (id) {
+            case "Revolver":
+                return new Weapon(
+                        "Revolver", "Revolver",
+                        20, 1, 6, 1f,
+                        weaponIcons.get("Revolver"),
+                        weaponReloadAnimations.get("Revolver")
+                );
+            case "Shotgun":
+                return new Weapon(
+                        "Shotgun", "Shotgun",
+                        10, 4, 2, 1f,
+                        weaponIcons.get("Shotgun"),
+                        weaponReloadAnimations.get("Shotgun")
+                );
+            case "DualSMG":
+                return new Weapon(
+                        "DualSMG", "SMGs Dual",
+                        8, 1, 24, 2f,
+                        weaponIcons.get("DualSMG"),
+                        weaponReloadAnimations.get("DualSMG")
+                );
+            default:
+                return null;
+        }
     }
 
     private void loadWeaponAssets(String id) {

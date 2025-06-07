@@ -2,6 +2,8 @@ package com.twentyminutestilldawn.controllers;
 
 import com.twentyminutestilldawn.Main;
 import com.twentyminutestilldawn.models.GameAssetManager;
+import com.twentyminutestilldawn.models.SaveData;
+import com.twentyminutestilldawn.models.SaveManager;
 import com.twentyminutestilldawn.models.User;
 import com.twentyminutestilldawn.views.*;
 
@@ -36,7 +38,7 @@ public class MainMenuController {
 
             if (view.getScoreboardButton().isChecked()) {
                 Main.getMain().getScreen().dispose();
-//                Main.getMain().setScreen(new ScoreboardMenu(new ScoreboardController(), GameAssetManager.getGameAssetManager().getSkin(), user));
+                Main.getMain().setScreen(new ScoreboardMenu(user));
             }
 
             if (view.getTalentButton().isChecked()) {
@@ -45,8 +47,11 @@ public class MainMenuController {
             }
 
             if (view.getContinueButton().isChecked()) {
-                Main.getMain().getScreen().dispose();
-//                Main.getMain().setScreen(new GameView(user));
+                SaveData save = SaveManager.loadGame(user);
+                if (save != null) {
+                    GameView gameView = new GameView(user, save, GameAssetManager.getGameAssetManager().getSkin());
+                    Main.getMain().setScreen(gameView);
+                }
             }
 
             if (view.getLogoutButton().isPressed()) {
