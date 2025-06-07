@@ -1,6 +1,7 @@
 package com.twentyminutestilldawn.models;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -24,14 +25,20 @@ public class GameAssetManager {
     private final Map<String, Animation<TextureRegion>> weaponReloadAnimations = new HashMap<>();
     public Map<MonsterType, Animation<TextureRegion>> monsterWalkAnimations = new HashMap<>();
     private final Map<AbilityType, TextureRegion> abilityIcons = new EnumMap<>(AbilityType.class);
+    private final Map<String, Music> musicTracks = new HashMap<>();
     private Texture deadHeartTexture;
     private Animation<TextureRegion> heartAnimation;
     private Texture bulletTexture;
     private TextureRegion seedRegion;
     private Texture whitePixel;
+    private boolean grayscaleEnabled = false;
 
     private GameAssetManager() {
         skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
+
+        loadMusic("Track1", "LeMonde.mp3");
+        loadMusic("Track2", "Bean.mp3");
+        loadMusic("Track3", "Victoria.mp3");
 
         for (int i = 0; i < 4; i++) {
             Texture avatar = new Texture(Gdx.files.internal("Avatar/avatar_" + i + ".png"));
@@ -76,6 +83,30 @@ public class GameAssetManager {
             instance = new GameAssetManager();
         }
         return instance;
+    }
+
+    public void loadMusic(String name, String path) {
+        Music m = Gdx.audio.newMusic(Gdx.files.internal(path));
+        m.setLooping(true);
+        musicTracks.put(name, m);
+    }
+
+    public Music getMusic(String name) {
+        return musicTracks.get(name);
+    }
+
+    public void stopAllMusic() {
+        for (Music m : musicTracks.values()) {
+            m.stop();
+        }
+    }
+
+    public boolean isGrayscaleEnabled() {
+        return grayscaleEnabled;
+    }
+
+    public void setGrayscaleEnabled(boolean enabled) {
+        grayscaleEnabled = enabled;
     }
 
     public Skin getSkin() {

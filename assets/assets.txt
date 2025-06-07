@@ -7,6 +7,7 @@ Avatar/avatar_0.png
 Avatar/avatar_1.png
 Avatar/avatar_2.png
 Avatar/avatar_3.png
+Bean.mp3
 Heart/DeadHeart.png
 Heart/HeartAnimation_0.png
 Heart/HeartAnimation_1.png
@@ -78,6 +79,7 @@ Hero/Shana/Walk_4.png
 Hero/Shana/Walk_5.png
 Hero/Shana/Walk_6.png
 Hero/Shana/Walk_7.png
+LeMonde.mp3
 Monster/Elder/Elder_0.png
 Monster/Elder/Elder_1.png
 Monster/Elder/Elder_2.png
@@ -98,6 +100,7 @@ Monster/Tree/Tree_0.png
 Monster/Tree/Tree_1.png
 Monster/Tree/Tree_2.png
 Monster/Tree/Tree_3.png
+Victoria.mp3
 Weapon/DualSMG/DualSMGReload_0.png
 Weapon/DualSMG/DualSMGReload_1.png
 Weapon/DualSMG/DualSMGReload_2.png

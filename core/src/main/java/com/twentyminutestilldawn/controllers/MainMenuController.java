@@ -23,7 +23,7 @@ public class MainMenuController {
         if (view != null) {
             if (view.getSettingsButton().isChecked()) {
                 Main.getMain().getScreen().dispose();
-//                Main.getMain().setScreen(new SettingsMenu(new SettingsController(), GameAssetManager.getGameAssetManager().getSkin(), user));
+                Main.getMain().setScreen(new SettingsMenu(user));
             }
 
             if (view.getProfileButton().isChecked()) {

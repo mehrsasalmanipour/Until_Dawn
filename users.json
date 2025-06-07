@@ -8,7 +8,7 @@ mehrsa: {
 	securityAnswer: 121
 	score: 7214
 	totalKills: 7
-	totalSurvivalTime: 50
+	totalSurvivalTime: 57
 }
 meh: {
 	class: com.twentyminutestilldawn.models.User

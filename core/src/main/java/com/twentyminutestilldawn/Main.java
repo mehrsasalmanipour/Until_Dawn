@@ -1,6 +1,7 @@
 package com.twentyminutestilldawn;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.twentyminutestilldawn.controllers.StartMenuController;
 import com.twentyminutestilldawn.models.GameAssetManager;
@@ -14,8 +15,22 @@ public class Main extends Game {
     public void create() {
         instance = this;
         batch = new SpriteBatch();
-        getMain().setScreen(new StartMenu(new StartMenuController(), GameAssetManager.getGameAssetManager().getSkin()));
+
+        GameAssetManager assetManager = GameAssetManager.getGameAssetManager();
+        assetManager.loadMusic("Track1", "LeMonde.mp3");
+
+        Music music = assetManager.getMusic("Track1");
+        if (music != null) {
+            music.setLooping(true);
+            music.setVolume(1f);
+            music.play();
+        } else {
+            System.err.println("ERROR: Music 'Track1' not found.");
+        }
+
+        setScreen(new StartMenu(new StartMenuController(), assetManager.getSkin()));
     }
+
 
     @Override
     public void render() {

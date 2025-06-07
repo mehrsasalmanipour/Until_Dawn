@@ -375,7 +375,7 @@ public class GameView implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(camera.combined);
 
-        if (useGrayscale) {
+        if (GameAssetManager.getGameAssetManager().isGrayscaleEnabled()) {
             batch.setShader(grayscaleShader);
         } else {
             batch.setShader(null);
